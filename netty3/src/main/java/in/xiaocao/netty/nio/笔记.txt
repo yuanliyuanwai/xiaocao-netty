@@ -1,0 +1,30 @@
+1. NIO的特点
+  主要类包括：ServerSocketChannel相当于ServerSocket
+            SocketChannel相当于Socket
+            Selector 选择器
+            SelectionKey 事件类型
+
+2. 客户端关闭的时候会抛出异常，死循环
+  解决方案
+	int read = channel.read(buffer);
+	if(read > 0){
+		byte[] data = buffer.array();
+		String msg = new String(data).trim();
+		System.out.println("服务端收到信息：" + msg);
+		
+		//回写数据
+		ByteBuffer outBuffer = ByteBuffer.wrap("好的".getBytes());
+		channel.write(outBuffer);// 将消息回送给客户端
+	} else {
+		System.out.println("客户端关闭");
+		key.cancel();
+	}
+
+3. selector.select()阻塞，那为什么说nio是非阻塞的IO
+	selector.select() 阻塞
+	selector.select(1000) 阻塞一定时间或者有事件返回
+	selector.wakeup() 也可以唤醒selector
+	selector.selectNow() 立刻返回
+
+4. SelectionKey.OP_WRITE是代表什么意思
+  OP_WRITE表示底层缓冲区是否有空间，是则响应返还true
